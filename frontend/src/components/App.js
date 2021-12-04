@@ -1,8 +1,6 @@
 import React from 'react';
 import HomePage from './Home';
-// import RoomJoin from './RoomJoin';
-// import CreateRoom from './CreateRoom';
-// import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import ReactDOM from 'react-dom';
 
 const App = () => {
   return (
@@ -13,3 +11,4 @@ const App = () => {
 };
 
 export default App;
+ReactDOM.render(<App />, document.getElementById('app'));

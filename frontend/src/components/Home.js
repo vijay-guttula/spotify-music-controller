@@ -7,8 +7,8 @@ const Home = () => {
   return (
     <Router>
       <Switch>
-        <Route path='/create-room' component={CreateRoom} />
-        <Route path='/join-room' component={RoomJoin} />
+        <Route path='/create' component={CreateRoom} />
+        <Route path='/join' component={RoomJoin} />
       </Switch>
     </Router>
   );
