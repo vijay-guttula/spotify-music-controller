@@ -32,7 +32,7 @@ const RoomJoin = () => {
     if (response.ok) {
       history.push('/room/' + state.roomCode);
     } else {
-      this.setState({ error: 'Room not found.' });
+      setState({ error: 'Room not found.' });
     }
   };
 

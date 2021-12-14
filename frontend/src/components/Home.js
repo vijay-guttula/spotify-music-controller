@@ -16,7 +16,7 @@ const Home = () => {
             <Grid item xs={12} align='center'>
               <Button
                 variant='contained'
-                color='success'
+                color='secondary'
                 to='/create'
                 component={Link}
               >
