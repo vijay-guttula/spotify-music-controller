@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { TextField, Button, Grid, Typography, Box } from '@material-ui/core';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 
 const RoomJoin = () => {
+  let history = useHistory();
   let [state, setState] = useState({
     roomCode: '',
     error: '',
@@ -28,7 +29,9 @@ const RoomJoin = () => {
     let response = await fetch('/api/join-room', responseData);
     let responseJson = await response.json();
     console.log(responseJson);
-    return;
+    if (response.ok) {
+      history.push('/room/' + state.roomCode);
+    }
   };
 
   return (

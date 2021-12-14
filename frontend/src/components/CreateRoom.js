@@ -53,7 +53,7 @@ const CreateRoom = () => {
     let response = await fetch('/api/create-room', requestOptions);
     let responseJson = await response.json();
     console.log(responseJson);
-    history.push('/room/' + responseJson.code);
+    if (response.ok) history.push('/room/' + responseJson.code);
   };
 
   return (
