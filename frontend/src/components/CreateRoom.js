@@ -11,8 +11,8 @@ import {
   FormControlLabel,
   Box,
 } from '@material-ui/core';
-import Link from 'react-router-dom';
 import { useState } from 'react';
+import { Link, useHistory } from 'react-router-dom';
 
 const CreateRoom = () => {
   const [defaultVotes, setdefaultVotes] = useState(2);
@@ -20,6 +20,7 @@ const CreateRoom = () => {
     guestCanPause: true,
     votesToSkip: defaultVotes,
   });
+  let history = useHistory();
 
   const handleGuestCanPauseChange = (e) => {
     let tempState = {
@@ -52,7 +53,7 @@ const CreateRoom = () => {
     let response = await fetch('/api/create-room', requestOptions);
     let responseJson = await response.json();
     console.log(responseJson);
-    window.location.href = '/room/' + responseJson.code;
+    history.push('/room/' + responseJson.code);
   };
 
   return (

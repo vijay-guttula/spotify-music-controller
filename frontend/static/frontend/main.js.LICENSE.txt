@@ -220,8 +220,6 @@
 
 /*! export decomposeColor [provided] [no usage info] [missing usage info prevents renaming] */
 
-/*! export default [not provided] [no usage info] [missing usage info prevents renaming] */
-
 /*! export default [provided] [no usage info] [missing usage info prevents renaming] */
 
 /*! export displayPrint [provided] [no usage info] [missing usage info prevents renaming] */

@@ -1,18 +1,44 @@
+import { Box, Button, Grid, Typography } from '@material-ui/core';
 import React from 'react';
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-import CreateRoom from './CreateRoom';
-import RoomJoin from './RoomJoin';
-import Room from './Room';
+import { Link } from 'react-router-dom';
 
 const Home = () => {
   return (
-    <Router>
-      <Switch>
-        <Route path='/create' component={CreateRoom} />
-        <Route path='/join' component={RoomJoin} />
-        <Route path='/room/:roomCode' component={Room} />
-      </Switch>
-    </Router>
+    <Box mt={10} mx='auto'>
+      <Grid container spacing={1}>
+        <Grid item xs={12} align='center'>
+          <Typography variant='h4' component='h4'>
+            Hi, welcome to spotify music control
+          </Typography>
+        </Grid>
+        <Box mx='auto'>
+          <Box mt={10} mx='auto'>
+            <Grid item xs={12} align='center'>
+              <Button
+                variant='contained'
+                color='success'
+                to='/create'
+                component={Link}
+              >
+                Create Room
+              </Button>
+            </Grid>
+          </Box>
+          <Box mt={5} mx='auto'>
+            <Grid item xs={12} align='center'>
+              <Button
+                variant='contained'
+                color='primary'
+                to='/join'
+                component={Link}
+              >
+                Join Room
+              </Button>
+            </Grid>
+          </Box>
+        </Box>
+      </Grid>
+    </Box>
   );
 };
 
