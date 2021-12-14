@@ -10,7 +10,7 @@ const Room = (props) => {
   });
   let [showSettings, setShowSettings] = useState(false);
   let roomCode = props.match.params.roomCode;
-  console.log(props);
+  // console.log(props);
 
   useEffect(() => {
     const getRoomDetails = async () => {
@@ -30,7 +30,7 @@ const Room = (props) => {
     };
     getRoomDetails();
     console.log(state);
-  }, []);
+  }, [showSettings]);
 
   const handleLeaveButtonClick = async (e) => {
     let requestData = {
@@ -51,10 +51,25 @@ const Room = (props) => {
     setShowSettings(true);
   };
 
+  const handleCloseUpdateClick = (e) => {
+    setShowSettings(false);
+  };
+
   return (
     <Box mt={40} mx='auto'>
       {showSettings ? (
-        <CreateRoom update={true} state={state} />
+        <>
+          <CreateRoom update={true} state={state} roomCode={roomCode} />
+          <Grid item xs={12} align='center'>
+            <Button
+              variant='contained'
+              color='secondary'
+              onClick={(e) => handleCloseUpdateClick(e)}
+            >
+              Close
+            </Button>
+          </Grid>
+        </>
       ) : (
         <Grid container spacing={1}>
           <Grid item xs={12} align='center'>

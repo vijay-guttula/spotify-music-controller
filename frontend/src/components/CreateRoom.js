@@ -10,17 +10,23 @@ import {
   RadioGroup,
   FormControlLabel,
   Box,
+  Collapse,
 } from '@material-ui/core';
 import { useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
+import Alert from '@material-ui/lab/Alert';
 
 const CreateRoom = (props) => {
   let [defaultVotes, setdefaultVotes] = useState(2);
   let [state, setState] = useState({
-    guestCanPause: true,
-    votesToSkip: defaultVotes,
+    guestCanPause: props.state.guestCanPause || true,
+    votesToSkip: props.state.votesToSkip || defaultVotes,
+    sucMsg: '',
+    errMsg: '',
   });
   let isUpdatePage = props.update;
+  let roomCode = props.roomCode;
+  console.log(isUpdatePage, roomCode);
 
   let history = useHistory();
   console.log(history);
@@ -44,6 +50,7 @@ const CreateRoom = (props) => {
   };
 
   const handleRoomButtonPressed = async () => {
+    // if create button
     if (!isUpdatePage) {
       const requestOptions = {
         method: 'POST',
@@ -58,6 +65,8 @@ const CreateRoom = (props) => {
       console.log(responseJson);
       if (response.ok) history.push('/room/' + responseJson.code);
     }
+
+    // if update state
     if (isUpdatePage) {
       const requestOptions = {
         method: 'PATCH',
@@ -65,11 +74,17 @@ const CreateRoom = (props) => {
         body: JSON.stringify({
           votes_to_skip: state.votesToSkip,
           guest_can_pause: state.guestCanPause,
+          code: roomCode,
         }),
       };
       let response = await fetch('/api/update-room', requestOptions);
       let responseJson = await response.json();
       console.log(responseJson);
+      if (response.ok) {
+        setState({ ...state, sucMsg: 'Room Updated Successfully!' });
+      } else {
+        setState({ ...state, errMsg: responseJson.message });
+      }
       // if (response.ok) history.push('/room/' + responseJson.code);
     }
   };
@@ -77,6 +92,34 @@ const CreateRoom = (props) => {
   return (
     <Box mt={10} mx='auto'>
       <Grid container spacing={1}>
+        <Grid item xs={12} align='center'>
+          <Grid item xs={5} align='center'>
+            <Collapse
+              in={state.errMsg != '' || state.sucMsg != ''}
+              align='center'
+            >
+              {state.sucMsg != '' ? (
+                <Alert
+                  severity='success'
+                  onClose={() => {
+                    setState({ ...state, sucMsg: '' });
+                  }}
+                >
+                  {state.sucMsg}
+                </Alert>
+              ) : (
+                <Alert
+                  severity='error'
+                  onClose={() => {
+                    setState({ ...state, errMsg: '' });
+                  }}
+                >
+                  {state.errMsg}
+                </Alert>
+              )}
+            </Collapse>
+          </Grid>
+        </Grid>
         <Grid item xs={12} align='center'>
           <Typography component='h4' variant='h4'>
             {isUpdatePage ? 'Update Room Settings' : 'Create A Room'}
@@ -89,7 +132,7 @@ const CreateRoom = (props) => {
             </FormHelperText>
             <RadioGroup
               row
-              defaultValue='true'
+              defaultValue={`${state.guestCanPause}` || 'true'}
               onChange={(e) => handleGuestCanPauseChange(e)}
             >
               <FormControlLabel
@@ -113,7 +156,7 @@ const CreateRoom = (props) => {
               required={true}
               type='number'
               onChange={(e) => handleVotesChange(e)}
-              defaultValue={defaultVotes}
+              defaultValue={state.votesToSkip}
               inputProps={{
                 min: 1,
                 style: { textAlign: 'center' },
@@ -134,11 +177,7 @@ const CreateRoom = (props) => {
           </Button>
         </Grid>
         <Grid item xs={12} align='center'>
-          {isUpdatePage ? (
-            <Button color='secondary' variant='contained'>
-              Close
-            </Button>
-          ) : (
+          {!isUpdatePage && (
             <Button
               color='secondary'
               variant='contained'
