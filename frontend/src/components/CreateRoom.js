@@ -14,12 +14,14 @@ import {
 import { useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 
-const CreateRoom = () => {
-  const [defaultVotes, setdefaultVotes] = useState(2);
-  const [state, setState] = useState({
+const CreateRoom = (props) => {
+  let [defaultVotes, setdefaultVotes] = useState(2);
+  let [state, setState] = useState({
     guestCanPause: true,
     votesToSkip: defaultVotes,
   });
+  let isUpdatePage = props.update;
+
   let history = useHistory();
   console.log(history);
 
@@ -42,19 +44,34 @@ const CreateRoom = () => {
   };
 
   const handleRoomButtonPressed = async () => {
-    const requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        votes_to_skip: state.votesToSkip,
-        guest_can_pause: state.guestCanPause,
-      }),
-    };
-
-    let response = await fetch('/api/create-room', requestOptions);
-    let responseJson = await response.json();
-    console.log(responseJson);
-    if (response.ok) history.push('/room/' + responseJson.code);
+    if (!isUpdatePage) {
+      const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          votes_to_skip: state.votesToSkip,
+          guest_can_pause: state.guestCanPause,
+        }),
+      };
+      let response = await fetch('/api/create-room', requestOptions);
+      let responseJson = await response.json();
+      console.log(responseJson);
+      if (response.ok) history.push('/room/' + responseJson.code);
+    }
+    if (isUpdatePage) {
+      const requestOptions = {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          votes_to_skip: state.votesToSkip,
+          guest_can_pause: state.guestCanPause,
+        }),
+      };
+      let response = await fetch('/api/update-room', requestOptions);
+      let responseJson = await response.json();
+      console.log(responseJson);
+      // if (response.ok) history.push('/room/' + responseJson.code);
+    }
   };
 
   return (
@@ -62,7 +79,7 @@ const CreateRoom = () => {
       <Grid container spacing={1}>
         <Grid item xs={12} align='center'>
           <Typography component='h4' variant='h4'>
-            Create A Room
+            {isUpdatePage ? 'Update Room Settings' : 'Create A Room'}
           </Typography>
         </Grid>
         <Grid item xs={12} align='center'>
@@ -113,13 +130,24 @@ const CreateRoom = () => {
             variant='contained'
             onClick={() => handleRoomButtonPressed()}
           >
-            Create A Room
+            {isUpdatePage ? 'Update' : 'Create A Room'}
           </Button>
         </Grid>
         <Grid item xs={12} align='center'>
-          <Button color='secondary' variant='contained' to='/' component={Link}>
-            Back
-          </Button>
+          {isUpdatePage ? (
+            <Button color='secondary' variant='contained'>
+              Close
+            </Button>
+          ) : (
+            <Button
+              color='secondary'
+              variant='contained'
+              to='/'
+              component={Link}
+            >
+              Back
+            </Button>
+          )}
         </Grid>
       </Grid>
     </Box>
