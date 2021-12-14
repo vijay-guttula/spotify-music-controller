@@ -27,9 +27,9 @@ class JoinRoom(APIView):
         room = room[0]
         self.request.session['room_code'] = code
         return Response({'message':'Room Joined!'}, status=status.HTTP_200_OK) 
-      return Response({'Bad Request':'Invalid room code'}, status=status.HTTP_404_NOT_FOUND)
+      return Response({'message':'Invalid room code'}, status=status.HTTP_404_NOT_FOUND)
     
-    return Response({'Bad Request':'Invalid data'}, status=status.HTTP_404_NOT_FOUND)
+    return Response({'message':'Invalid data'}, status=status.HTTP_404_NOT_FOUND)
       
       
 class GetRoom(APIView):
@@ -77,7 +77,7 @@ class CreateRoomView(APIView):
         return Response(RoomSerializer(room).data, status=status.HTTP_201_CREATED)
     
     
-    return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
+    return Response({'message': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
   
 
 
@@ -102,4 +102,4 @@ class LeaveRoom(APIView):
         room = room_results[0]
         room.delete()
     
-    return Response({'Message':'Success'}, status=status.HTTP_200_OK) 
+    return Response({'message':'Success'}, status=status.HTTP_200_OK) 
