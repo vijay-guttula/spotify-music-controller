@@ -8,11 +8,17 @@ const Room = (props) => {
     isHost: true,
   });
   let roomCode = props.match.params.roomCode;
+  console.log(props);
 
   useEffect(() => {
     const getRoomDetails = async () => {
       let response = await fetch('/api/get-room' + '?code=' + roomCode);
       let responseJson = await response.json();
+      console.log(responseJson);
+      if (!response.ok) {
+        window.alert(responseJson.message);
+        window.location.href = '/';
+      }
       let tempState = {
         votesToSkip: responseJson.votes_to_skip,
         guestCanPause: responseJson.guest_can_pause,
@@ -35,7 +41,7 @@ const Room = (props) => {
     let data = await response.json();
     console.log(data);
     if (response.ok) {
-      window.location.href = '/';
+      props.history.push('/');
     }
   };
 

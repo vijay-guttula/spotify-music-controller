@@ -21,6 +21,7 @@ const CreateRoom = () => {
     votesToSkip: defaultVotes,
   });
   let history = useHistory();
+  console.log(history);
 
   const handleGuestCanPauseChange = (e) => {
     let tempState = {
