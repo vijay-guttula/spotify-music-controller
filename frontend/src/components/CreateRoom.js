@@ -16,17 +16,42 @@ import { useState } from 'react';
 
 const CreateRoom = () => {
   const [defaultVotes, setdefaultVotes] = useState(2);
+  const [state, setState] = useState({
+    guestCanPause: true,
+    votesToSkip: defaultVotes,
+  });
 
-  const handleGuestCanPauseChange = () => {
-    return;
+  const handleGuestCanPauseChange = (e) => {
+    let tempState = {
+      ...state,
+      guestCanPause: e.target.value == 'true' ? true : false,
+    };
+    setState(tempState);
+    console.log(state);
   };
 
-  const handleVotesChange = () => {
-    return;
+  const handleVotesChange = (e) => {
+    let tempState = {
+      ...state,
+      votesToSkip: e.target.value,
+    };
+    setState(tempState);
+    console.log(state);
   };
 
-  const handleRoomButtonPressed = () => {
-    return;
+  const handleRoomButtonPressed = async () => {
+    const requestOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        votes_to_skip: state.votesToSkip,
+        guest_can_pause: state.guestCanPause,
+      }),
+    };
+
+    let response = await fetch('/api/create-room', requestOptions);
+    let responseJson = await response.json();
+    console.log(responseJson);
   };
 
   return (
@@ -45,7 +70,7 @@ const CreateRoom = () => {
             <RadioGroup
               row
               defaultValue='true'
-              onChange={() => handleGuestCanPauseChange()}
+              onChange={(e) => handleGuestCanPauseChange(e)}
             >
               <FormControlLabel
                 value='true'
@@ -67,7 +92,7 @@ const CreateRoom = () => {
             <TextField
               required={true}
               type='number'
-              onChange={() => handleVotesChange()}
+              onChange={(e) => handleVotesChange(e)}
               defaultValue={defaultVotes}
               inputProps={{
                 min: 1,
