@@ -52,6 +52,7 @@ const CreateRoom = () => {
     let response = await fetch('/api/create-room', requestOptions);
     let responseJson = await response.json();
     console.log(responseJson);
+    window.location.href = '/room/' + responseJson.code;
   };
 
   return (
