@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Grid, Button, Typography, Box } from '@material-ui/core';
+import { Grid, Button, Typography, Box, Avatar } from '@material-ui/core';
 import CreateRoom from './CreateRoom';
 
 const Room = (props) => {
@@ -7,12 +7,25 @@ const Room = (props) => {
     votesToSkip: 0,
     guestCanPause: true,
     isHost: true,
+    spotifyAuthenticated: false,
   });
   let [showSettings, setShowSettings] = useState(false);
   let roomCode = props.match.params.roomCode;
   // console.log(props);
 
   useEffect(() => {
+    const authenticateSpotify = async () => {
+      let response = await fetch('/spotify/is-authenticated');
+      let data = await response.json();
+      console.log(data);
+      if (data.status) setState({ ...state, spotifyAuthenticated: true });
+      else {
+        let response = await fetch('/spotify/get-auth-url');
+        let data = await response.json();
+        console.log(data);
+        window.location.replace(data.url);
+      }
+    };
     const getRoomDetails = async () => {
       let response = await fetch('/api/get-room' + '?code=' + roomCode);
       let responseJson = await response.json();
@@ -27,6 +40,7 @@ const Room = (props) => {
         isHost: responseJson.is_host,
       };
       setState(tempState);
+      await authenticateSpotify();
     };
     getRoomDetails();
     console.log(state);

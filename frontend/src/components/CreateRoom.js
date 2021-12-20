@@ -17,16 +17,16 @@ import { Link, useHistory } from 'react-router-dom';
 import Alert from '@material-ui/lab/Alert';
 
 const CreateRoom = (props) => {
-  let [defaultVotes, setdefaultVotes] = useState(2);
   let [state, setState] = useState({
-    guestCanPause: props.state.guestCanPause || true,
-    votesToSkip: props.state.votesToSkip || defaultVotes,
+    guestCanPause: props.state ? props.state.guestCanPause : true,
+    votesToSkip: props.state ? props.state.votesToSkip : 2,
     sucMsg: '',
     errMsg: '',
   });
+
   let isUpdatePage = props.update;
   let roomCode = props.roomCode;
-  console.log(isUpdatePage, roomCode);
+  // console.log(isUpdatePage, roomCode);
 
   let history = useHistory();
   console.log(history);
@@ -127,8 +127,8 @@ const CreateRoom = (props) => {
         </Grid>
         <Grid item xs={12} align='center'>
           <FormControl component='fieldset'>
-            <FormHelperText>
-              <div align='center'>Guest Control of Playback State</div>
+            <FormHelperText style={{ textAlign: 'center' }}>
+              Guest Control of Playback State
             </FormHelperText>
             <RadioGroup
               row
@@ -162,8 +162,8 @@ const CreateRoom = (props) => {
                 style: { textAlign: 'center' },
               }}
             />
-            <FormHelperText>
-              <div align='center'>Votes Required To Skip Song</div>
+            <FormHelperText style={{ textAlign: 'center' }}>
+              Votes Required To Skip Song
             </FormHelperText>
           </FormControl>
         </Grid>

@@ -5,6 +5,10 @@ from rest_framework import status
 from requests import Request, post
 from .utils import update_or_create_user_tokens, is_spotify_authenticated
 
+import environ
+env = environ.Env()
+environ.Env.read_env()
+
 # Create your views here.
 
 class AuthURL(APIView):
@@ -14,11 +18,11 @@ class AuthURL(APIView):
     url = Request('GET','https://accounts.spotify.com/authorize', params={
       'scope': scopes,
       'response_type':'code',
-      'redirect_uri': REDIRECT_URI,
-      'client_id': CLIENT_ID,
+      'redirect_uri': env('REDIRECT_URI'),
+      'client_id': env('CLIENT_ID'),
     }).prepare().url
     
-    return Response({'url' : url}, status=status.HTTP_200_OK)
+    return Response({'status': 'success','url' : url}, status=status.HTTP_200_OK)
   
 
 def spotify_callback (request, format=None):
@@ -28,9 +32,9 @@ def spotify_callback (request, format=None):
   response = post('https://accounts.spotify.com/api/token', data={
     'grant_type':'authorization_code',
     'code' : code,
-    'redirect_uri' : REDIRECT_URI,
-    'client_id' : CLIENT_ID,
-    'client_secret' : CLIENT_SECRET
+    'redirect_uri' : env('REDIRECT_URI'),
+    'client_id' : env('CLIENT_ID'),
+    'client_secret' : env('CLIENT_SECRET')
   }).json()
   
   access_token = response.get('access_token')
@@ -42,11 +46,11 @@ def spotify_callback (request, format=None):
   if not request.session.exists(request.session.session_key):
     request.session.create()
   
-  update_or_create_user_tokens(session_id=request.session.session_key,access_token=access_token, token_type=token_type,refresh_token=refresh_token,expires_in=expires_in)
+  update_or_create_user_tokens(request.session.session_key, access_token, token_type,expires_in,refresh_token)
   
   return redirect('frontend:')
 
 class IsAuthenticated(APIView):
   def get(self, request, format=None):
     is_authenticated = is_spotify_authenticated(self.request.session.session_key)
-    return Response({'status':'is_authenticated'}, status=status.HTTP_200_OK)
+    return Response({'status': is_authenticated}, status=status.HTTP_200_OK)

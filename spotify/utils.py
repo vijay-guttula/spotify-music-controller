@@ -3,16 +3,23 @@ from requests import Request, post
 from requests.sessions import session
 from .models import SpotityToken
 from django.utils import timezone
-from datatime import timedelta
+from datetime import timedelta
+
+import environ
+env = environ.Env()
+environ.Env.read_env()
 
 def get_user_tokens(session_id):
-  user_tokens = SpotityToken.objects.filter(user='session_id')
+  user_tokens = SpotityToken.objects.filter(user=session_id)
   if user_tokens.exists():
     return user_tokens[0]
   return None
 
 def update_or_create_user_tokens(session_id, access_token, token_type, expires_in, refresh_token):
   tokens = get_user_tokens(session_id)
+  print(session_id)
+  print(tokens)
+  print(timedelta(seconds=expires_in))
   expires_in = timezone.now() + timedelta(seconds=expires_in)
   
   if tokens:
@@ -43,8 +50,8 @@ def refresh_spotify_token(session_id):
   response = post('https://accounts.spotify.com/api/token', data={
     'grant_type':'refresh_token',
     'refresh_token' : 'refresh_token',
-    'client_id':CLIENT_ID,
-    'client_secret': CLIENT_SECRET
+    'client_id': env('CLIENT_ID'),
+    'client_secret': env('CLIENT_SECRET')
   }).json()
   
   access_token = response.get('access_token')
