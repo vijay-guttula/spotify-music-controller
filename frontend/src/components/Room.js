@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Grid, Button, Typography, Box, Avatar } from '@material-ui/core';
 import CreateRoom from './CreateRoom';
+import Player from './Player';
 
 const Room = (props) => {
   let [state, setState] = useState({
@@ -8,6 +9,7 @@ const Room = (props) => {
     guestCanPause: true,
     isHost: true,
     spotifyAuthenticated: false,
+    song: {},
   });
   let [showSettings, setShowSettings] = useState(false);
   let roomCode = props.match.params.roomCode;
@@ -20,6 +22,7 @@ const Room = (props) => {
       console.log(data);
       if (data.status) {
         setState({ ...state, spotifyAuthenticated: true });
+        await getCurrentSong();
       } else {
         let response = await fetch('/spotify/get-auth-url');
         let data = await response.json();
@@ -41,10 +44,14 @@ const Room = (props) => {
         isHost: responseJson.is_host,
       };
       setState(tempState);
+    };
+
+    const callerFunction = async () => {
+      await getRoomDetails();
       await authenticateSpotify();
     };
-    getRoomDetails();
-    console.log(state);
+
+    callerFunction();
   }, [showSettings]);
 
   const handleLeaveButtonClick = async (e) => {
@@ -70,8 +77,18 @@ const Room = (props) => {
     setShowSettings(false);
   };
 
+  const getCurrentSong = async () => {
+    let response = await fetch('/spotify/get-playback-state');
+    let data = await response.json();
+    if (!response.ok) {
+      return {};
+    }
+    let song = data.data;
+    setState({ ...state, song: song });
+  };
+
   return (
-    <Box mt={40} mx='auto'>
+    <Box mt={20} mx='auto'>
       {showSettings ? (
         <>
           <CreateRoom update={true} state={state} roomCode={roomCode} />
@@ -92,21 +109,15 @@ const Room = (props) => {
               Code: {roomCode}
             </Typography>
           </Grid>
-          <Grid item xs={12} align='center'>
-            <Typography variant='h6' component='h6'>
-              Votes: {state.votesToSkip}
-            </Typography>
-          </Grid>
-          <Grid item xs={12} align='center'>
-            <Typography variant='h6' component='h6'>
-              Guest Can Pause: {state.guestCanPause.toString()}
-            </Typography>
-          </Grid>
-          <Grid item xs={12} align='center'>
-            <Typography variant='h6' component='h6'>
-              Host: {state.isHost.toString()}
-            </Typography>
-          </Grid>
+
+          {state.song && (
+            <Box mx='auto' mt={5} mb={5}>
+              <Grid item align='center'>
+                <Player song={state.song} />
+              </Grid>
+            </Box>
+          )}
+
           {state.isHost && (
             <Grid item xs={12} align='center'>
               <Button
