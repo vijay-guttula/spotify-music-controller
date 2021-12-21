@@ -18,8 +18,9 @@ const Room = (props) => {
       let response = await fetch('/spotify/is-authenticated');
       let data = await response.json();
       console.log(data);
-      if (data.status) setState({ ...state, spotifyAuthenticated: true });
-      else {
+      if (data.status) {
+        setState({ ...state, spotifyAuthenticated: true });
+      } else {
         let response = await fetch('/spotify/get-auth-url');
         let data = await response.json();
         console.log(data);
