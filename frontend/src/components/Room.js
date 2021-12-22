@@ -9,7 +9,7 @@ const Room = (props) => {
     guestCanPause: true,
     isHost: true,
     spotifyAuthenticated: false,
-    song: {},
+    accessToken: '',
   });
   let [showSettings, setShowSettings] = useState(false);
   let roomCode = props.match.params.roomCode;
@@ -21,8 +21,11 @@ const Room = (props) => {
       let data = await response.json();
       console.log(data);
       if (data.status) {
-        setState({ ...state, spotifyAuthenticated: true });
-        await getCurrentSong();
+        setState({
+          ...state,
+          spotifyAuthenticated: true,
+          accessToken: data.accessToken,
+        });
       } else {
         let response = await fetch('/spotify/get-auth-url');
         let data = await response.json();
@@ -110,13 +113,7 @@ const Room = (props) => {
             </Typography>
           </Grid>
 
-          {state.song && (
-            <Box mx='auto' mt={5} mb={5}>
-              <Grid item align='center'>
-                <Player song={state.song} />
-              </Grid>
-            </Box>
-          )}
+          {state.accessToken && <Player token={state.accessToken} />}
 
           {state.isHost && (
             <Grid item xs={12} align='center'>

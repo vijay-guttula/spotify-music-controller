@@ -15,7 +15,15 @@ environ.Env.read_env()
 
 class AuthURL(APIView):
   def get(self, request, format=None):
-    scopes = 'user-read-playback-state user-modify-playback-state user-read-currently-playing streaming app-remote-control playlist-read-private playlist-modify-public user-read-playback-position user-top-read user-read-recently-played'
+    scopes = 'user-read-playback-state \
+              user-modify-playback-state \
+              user-read-currently-playing \
+              user-read-private \
+              user-read-email \
+              streaming \
+              app-remote-control \
+              user-read-recently-played \
+              '
     
     url = Request('GET','https://accounts.spotify.com/authorize', params={
       'scope': scopes,
@@ -54,8 +62,8 @@ def spotify_callback (request, format=None):
 
 class IsAuthenticated(APIView):
   def get(self, request, format=None):
-    is_authenticated = is_spotify_authenticated(self.request.session.session_key)
-    return Response({'status': is_authenticated}, status=status.HTTP_200_OK)
+    authenticatedCreds = is_spotify_authenticated(self.request.session.session_key)
+    return Response({'status': authenticatedCreds.get('authenticated'), 'accessToken':authenticatedCreds.get('accessToken')}, status=status.HTTP_200_OK)
   
   
 
